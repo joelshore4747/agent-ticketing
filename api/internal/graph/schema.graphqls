@@ -1,0 +1,218 @@
+scalar DateTime
+
+enum TicketType { bug feature improvement chore research design refactor eval }
+enum Priority { low medium high urgent }
+enum Status { triage open in_progress done closed }
+enum Source { ai human }
+
+type Project { id: ID!  key: String!  name: String!  repoPath: String }   # repoPath: absolute checkout path, null until known
+
+type Area {
+  id: ID!  name: String!  description: String!  pathGlobs: [String!]!
+  autoAcceptAi: Boolean!  archivedAt: DateTime  createdAt: DateTime!  updatedAt: DateTime!
+  openCount: Int!          # tickets in triage/open/in_progress
+}
+
+type Ticket {
+  id: ID!  key: String!  number: Int!
+  title: String!  description: String!
+  type: TicketType!  priority: Priority!  status: Status!  source: Source!
+  nextStatuses: [Status!]!                # where this ticket may move from its status (rule 4)
+  area: Area
+  branch: String  prUrl: String            # prUrl = url of the most recent pull request
+  resolution: String  fingerprint: String  seenCount: Int!
+  claimedBy: String  claimedAt: DateTime
+  batchPosition: Int                      # order in a plan batch; null outside one
+  tags: [String!]!                        # names from the managed tag list, sorted
+  goals: [Int!]!                          # the key goals (1-9) it serves, sorted (TP-107)
+  # Section A, the human's: set with setTicketFoundation only.
+  intent: String!  constraints: String!  nonGoals: String!
+  criteria: [Criterion!]!
+  # Section B, the AI's proposal; approveApproach records the human's approval.
+  approach: String!  riskAndRollback: String!  workedExample: String!  verificationPlan: String!
+  evidenceRefs: [String!]!  estimatedTokens: Int  estimatedCostUsd: Float
+  approachApprovedBy: String  approachApprovedAt: DateTime
+  # Section C, what the AI reports; gatePassed is set only by the out-of-band check runner.
+  verifiedBy: String  measuredDelta: String  gatePassed: Boolean  gateCheckedAt: DateTime
+  summaryForHuman: String
+  checks: [TicketCheck!]!                 # public checks only; held-out ones are never served
+  decisions: [Decision!]!                 # newest first (rule 19)
+  decisionId: ID                          # the current one
+  version: Int!
+  createdAt: DateTime!  updatedAt: DateTime!  completedAt: DateTime
+  comments: [Comment!]!
+  events: [TicketEvent!]!
+  locations: [TicketLocation!]!
+  pullRequests: [PullRequest!]!
+}
+
+type Comment { id: ID!  author: String!  body: String!  kind: String!  createdAt: DateTime! }
+type TicketEvent { id: ID!  actor: String!  field: String!  oldValue: String  newValue: String  createdAt: DateTime! }
+type TicketLocation { id: ID!  filePath: String!  lineStart: Int  lineEnd: Int  snippet: String }
+type PullRequest { id: ID!  url: String!  number: Int  branch: String  state: String!  createdAt: DateTime! }
+
+type TicketPage { items: [Ticket!]!  total: Int! }
+
+enum BatchKind { audit review prompt plan }
+enum GuidanceKind { workflow convention area checklist }
+enum CheckpointDecision { continue adjust stop }
+enum CriterionTier { behavioural measurement gate }
+
+type Criterion {
+  id: ID!  tier: CriterionTier!  ordinal: Int!  text: String!  tripwire: Tripwire
+  verdicts: [CriterionVerdict!]!          # newest first; the first is the one that counts (rule 21)
+}
+enum Verdict { pass fail deviation }
+type CriterionVerdict { id: ID!  verdict: Verdict!  reason: String!  evidence: [String!]!  judgedBy: String!  createdAt: DateTime! }
+type TicketCheck { id: ID!  ordinal: Int!  description: String!  kind: String!  command: String  expectExit: Int! }
+# A test whose meaning a human has confirmed; a changed test body clears the confirmation.
+type Tripwire { id: ID!  testRef: String!  meaning: String!  confirmedBy: String  confirmedAt: DateTime }
+enum DecisionKind { accepted deferred rejected reframed }
+# Never edited: a changed mind is a new decision that supersedes it. madeBy (human | ai) is set by the
+# transport it arrived on — GraphQL is the human's, REST and MCP the agent's.
+type Decision {
+  id: ID!  kind: DecisionKind!  madeBy: String!  evidenceRefs: [String!]!  rationale: String!
+  revisitTrigger: String  supersedes: ID  citesRevisionId: ID  actor: String!  createdAt: DateTime!
+}
+# The agent's current decision on a ticket that cites no evidence (deferrals are exempt).
+type UncitedDecision { decision: Decision!  ticketKey: String!  ticketTitle: String! }
+# Claude's change to a human-owned field that nobody has acted on: the field has not changed since.
+type PendingProposal { ticketKey: String!  ticketTitle: String!  field: String!  proposed: String!  actor: String!  createdAt: DateTime! }
+# Everything in a project waiting on a human decision; each item names where it is made.
+type NeedsYou {
+  triage: [Ticket!]!  checkpoints: [Batch!]!  proposals: [PendingProposal!]!
+  uncited: [UncitedDecision!]!  tripwires: [Tripwire!]!  total: Int!
+}
+enum RoadmapState { locked unplanned open at_eval awaiting_checkpoint finished stopped }
+
+# A batch is provenance and intent: which tickets were produced together, and why. Its guidance is
+# what an agent picking up one of those tickets is handed along with the work.
+# The human read of a batch is what / how / brief (why). A plan batch's tickets are ordered and end
+# in an eval ticket; its checkpoint is the human's decision once it has finished.
+type Batch {
+  id: ID!  kind: BatchKind!  actor: String!
+  title: String!  what: String!  how: String!  brief: String!
+  gitRef: String  summary: String  findingsCount: Int!
+  startedAt: DateTime!  finishedAt: DateTime
+  roadmapId: ID  sequence: Int
+  checkpointDecision: CheckpointDecision  checkpointNote: String  checkpointBy: String  checkpointAt: DateTime
+  digest: String  digestAt: DateTime       # markdown computed by finishing the batch; nobody writes it
+  reviewsRequired: Boolean!
+  reviews: [ProjectReview!]!               # the before and after project reviews (goal 2)
+  guidance: [GuidanceDoc!]!
+  tickets: [Ticket!]!                      # in batch order
+  progress: BatchProgress                  # plan batches only
+}
+
+# The project memory at one commit, taken before or after a batch (goal 2).
+type ProjectReview { id: ID!  phase: String!  commit: String!  body: String!  actor: String!  createdAt: DateTime! }
+
+type BatchProgress {
+  next: String                             # key of the ticket to work next; null when locked or done
+  lockedBy: String                         # why an earlier roadmap batch holds this one
+  blockedBy: [BlockedTicket!]!
+}
+type BlockedTicket { key: String!  behind: String! }
+
+type Roadmap {
+  id: ID!  title: String!  spec: String!  createdAt: DateTime!  archivedAt: DateTime
+  batches: [RoadmapBatch!]!                # in sequence
+}
+type RoadmapBatch { batch: Batch!  state: RoadmapState!  work: Int!  workDone: Int! }
+
+type Tag { id: ID!  name: String!  description: String!  archivedAt: DateTime  createdAt: DateTime! }
+
+# The document is mutable; its revisions are not. `body` is the current revision's text.
+type GuidanceDoc {
+  id: ID!  slug: String!  title: String!  kind: GuidanceKind!
+  body: String!  revision: Int!
+  inline: Boolean!  weight: Int!
+  sourcePaths: [String!]!  sourceCommit: String
+  reviewedAt: DateTime  reviewedBy: String
+  stale: Boolean!  staleReason: String  driftReportedAt: DateTime
+  updatedAt: DateTime!
+}
+
+input TicketFilter {
+  source: Source  status: [Status!]  type: TicketType  areaId: ID  priority: Priority
+  createdAfter: DateTime  updatedAfter: DateTime   # inclusive lower bounds
+  tag: String
+}
+
+# `project` is a project KEY everywhere it appears. Omitted, it resolves to the oldest project,
+# so a single-project install never has to name one. Mutations addressing a ticket by id take no
+# project: the id already names one.
+type Query {
+  project(key: String): Project!
+  projects: [Project!]!                            # oldest first; the first is the default
+  tickets(project: String, filter: TicketFilter, search: String, limit: Int = 50, offset: Int = 0): TicketPage!
+  ticket(project: String, key: String!): Ticket
+  areas(project: String, includeArchived: Boolean = false): [Area!]!
+  batches(project: String): [Batch!]!
+  batch(project: String, id: ID!): Batch
+  guidance(project: String): [GuidanceDoc!]!
+  roadmaps(project: String): [Roadmap!]!
+  roadmap(project: String, id: ID!): Roadmap
+  tags(project: String, includeArchived: Boolean = false): [Tag!]!
+  tripwires(project: String): [Tripwire!]!
+  uncitedDecisions(project: String): [UncitedDecision!]!
+  needsYou(project: String): NeedsYou!
+}
+
+input CreateTicketInput {
+  title: String!  description: String = ""
+  type: TicketType!  priority: Priority = medium
+  source: Source = human
+  areaId: ID  branch: String
+  tags: [String!]                          # names from the managed tag list
+  goals: [Int!]                            # key goals 1-9
+}
+
+# Every field optional; only provided fields change.
+input UpdateTicketInput {
+  title: String  description: String  type: TicketType  priority: Priority
+  areaId: ID  clearArea: Boolean  branch: String  prUrl: String
+  tags: [String!]                          # replaces the set; [] clears it, omitted leaves it
+  goals: [Int!]                            # replaces the key goals the ticket serves
+  approach: String  riskAndRollback: String  workedExample: String  verificationPlan: String
+  evidenceRefs: [String!]  estimatedTokens: Int  estimatedCostUsd: Float
+  verifiedBy: String  measuredDelta: String  summaryForHuman: String
+}
+
+input CriterionInput { tier: CriterionTier!  text: String!  tripwireId: ID }
+# Section A. Omitted fields are left alone; criteria, when given, replaces the whole list.
+input FoundationInput { intent: String  constraints: String  nonGoals: String  criteria: [CriterionInput!] }
+
+# A deferral needs revisitTrigger; a reframing needs a rationale. supersedes defaults to the current one.
+input DecisionInput {
+  kind: DecisionKind!  rationale: String = ""  evidenceRefs: [String!]  revisitTrigger: String
+  supersedes: ID  citesRevisionId: ID
+}
+
+input AreaInput { name: String!  description: String = ""  pathGlobs: [String!] = []  autoAcceptAi: Boolean = false }
+input AreaPatch { name: String  description: String  pathGlobs: [String!]  autoAcceptAi: Boolean }
+
+type Mutation {
+  createProject(key: String!, name: String!, repoPath: String): Project!   # key ^[A-Z][A-Z0-9]{1,9}$, upper-cased; repoPath absolute
+  createTicket(project: String, input: CreateTicketInput!): Ticket!
+  updateTicket(id: ID!, version: Int!, patch: UpdateTicketInput!): Ticket!
+  transitionTicket(id: ID!, version: Int!, status: Status!, resolution: String): Ticket!
+  acceptTicket(id: ID!, version: Int!): Ticket!                      # triage → open
+  dismissTicket(id: ID!, version: Int!, resolution: String = "Dismissed from inbox"): Ticket!   # triage → closed
+  addComment(ticketId: ID!, body: String!): Comment!
+  createArea(project: String, input: AreaInput!): Area!
+  updateArea(project: String, id: ID!, patch: AreaPatch!): Area!
+  archiveArea(project: String, id: ID!): Area!
+  unarchiveArea(project: String, id: ID!): Area!
+  # The human's moves on a plan. Deliberately absent from MCP and REST, like acceptTicket.
+  acceptBatch(project: String, id: ID!): Batch!                       # every triage ticket in it → open
+  checkpointBatch(project: String, id: ID!, decision: CheckpointDecision!, note: String = ""): Batch!
+  createTag(project: String, name: String!, description: String = ""): Tag!
+  archiveTag(project: String, id: ID!): Tag!
+  unarchiveTag(project: String, id: ID!): Tag!
+  # The human's side of the ownership model.
+  setTicketFoundation(id: ID!, version: Int!, input: FoundationInput!): Ticket!
+  approveApproach(id: ID!, version: Int!): Ticket!
+  confirmTripwire(project: String, id: ID!, meaning: String): Tripwire!
+  recordDecision(ticketId: ID!, input: DecisionInput!): Decision!    # made_by human
+}

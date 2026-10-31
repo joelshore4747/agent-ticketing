@@ -1,0 +1,85 @@
+# The schema is docs/api.md's SDL, copied to internal/graph/schema.graphqls by `just schema` and
+# checked by a test — so the documented contract really is the one the server serves.
+schema:
+  - internal/graph/schema.graphqls
+
+exec:
+  filename: internal/graph/generated.go
+  package: graph
+
+model:
+  filename: internal/graph/gqlmodel/models_gen.go
+  package: gqlmodel
+
+resolver:
+  layout: follow-schema
+  dir: internal/graph
+  package: graph
+  filename_template: "{name}.resolvers.go"
+
+autobind: []
+
+models:
+  ID:
+    model: github.com/99designs/gqlgen/graphql.ID
+  Int:
+    model: github.com/99designs/gqlgen/graphql.Int32
+  DateTime:
+    model: github.com/99designs/gqlgen/graphql.Time
+  # One definition of each enum, shared with Postgres and JSON (see internal/model/graphql.go).
+  TicketType:
+    model: github.com/joelshore/ticketing/api/internal/model.TicketType
+  Priority:
+    model: github.com/joelshore/ticketing/api/internal/model.Priority
+  Status:
+    model: github.com/joelshore/ticketing/api/internal/model.Status
+  Source:
+    model: github.com/joelshore/ticketing/api/internal/model.Source
+  BatchKind:
+    model: github.com/joelshore/ticketing/api/internal/model.BatchKind
+  GuidanceKind:
+    model: github.com/joelshore/ticketing/api/internal/model.GuidanceKind
+  CheckpointDecision:
+    model: github.com/joelshore/ticketing/api/internal/model.CheckpointDecision
+  CriterionTier:
+    model: github.com/joelshore/ticketing/api/internal/model.CriterionTier
+  DecisionKind:
+    model: github.com/joelshore/ticketing/api/internal/model.DecisionKind
+  Verdict:
+    model: github.com/joelshore/ticketing/api/internal/model.Verdict
+  # The four lists below are per-ticket queries, not columns, so they stay lazy.
+  Ticket:
+    fields:
+      comments:
+        resolver: true
+      events:
+        resolver: true
+      locations:
+        resolver: true
+      pullRequests:
+        resolver: true
+      criteria:
+        resolver: true
+      checks:
+        resolver: true
+      decisions:
+        resolver: true
+  # Same reasoning: a batch listing must not fan out into its tickets and documents.
+  Batch:
+    fields:
+      guidance:
+        resolver: true
+      tickets:
+        resolver: true
+      progress:
+        resolver: true
+      reviews:
+        resolver: true
+  Roadmap:
+    fields:
+      batches:
+        resolver: true
+  Criterion:
+    fields:
+      verdicts:
+        resolver: true

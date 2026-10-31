@@ -1,0 +1,62 @@
+/* Modal overlays: the shortcuts dialog, the new-project dialog and the board's accept/dismiss
+   confirmation all share this one panel style. */
+
+/* ---------- dialog ---------- */
+.dialog {
+  align-items: center;
+  background: rgb(23 25 28 / 45%);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 20px;
+  position: fixed;
+  z-index: 10;
+}
+
+.dialog__panel {
+  background: var(--ui-sheet);
+  border-radius: var(--ui-radius-panel);
+  box-shadow: var(--ui-shadow-lift);
+  display: grid;
+  gap: 10px;
+  max-width: 460px;
+  padding: 24px;
+  width: 100%;
+}
+
+.shortcuts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.shortcuts div {
+  align-items: baseline;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 8.5em 1fr;
+}
+
+.shortcuts dt {
+  display: flex;
+  gap: 4px;
+}
+
+.shortcuts dd {
+  margin: 0;
+}
+
+kbd {
+  background: var(--ui-surface-2);
+  border-radius: 4px;
+  font: var(--t-marker);
+  padding: 1px 6px;
+}
+
+.dialog__panel h2 {
+  font: var(--t-card);
+}
+
+.dialog__panel .btn-row {
+  margin-top: 4px;
+}

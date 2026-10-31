@@ -1,0 +1,486 @@
+/* The ticket page: its head, body panels and sidebar, plus comments/history/locations and the
+   ownership sections (foundation, criteria, decisions, proposals). */
+
+/* ---------- ticket page ---------- */
+.ticket {
+  display: grid;
+  gap: 18px;
+  grid-template-areas:
+    'head head'
+    'main side';
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+
+.ticket__head {
+  grid-area: head;
+}
+
+/* The What you do panel (TP-247) leads the head area, ahead of the title, so it reads first. */
+.ticket__head > .panel {
+  margin-bottom: 18px;
+}
+
+/* The outcome, told as an entry in the ticket's story rather than a field in the sidebar. */
+.resolved {
+  background: var(--col-done-tint);
+  border-radius: var(--ui-radius-panel);
+  display: grid;
+  font: var(--t-body);
+  gap: 6px;
+  padding: 18px 22px;
+}
+
+.resolved__head {
+  align-items: center;
+  color: var(--col-done);
+  display: flex;
+  font: var(--t-button);
+  gap: 8px;
+}
+
+.resolved__head time {
+  color: var(--ui-muted);
+  font: var(--t-marker);
+  margin-left: auto;
+}
+
+/* The branch sits in the head of "Where in the code", because that is where in the code it is. */
+.branch {
+  align-items: center;
+  color: var(--ui-muted);
+  display: flex;
+  font-family: var(--ui-mono);
+  font-size: 13px;
+  gap: 7px;
+}
+
+.branch svg {
+  flex: none;
+}
+
+.ticket__head h1 {
+  font: var(--t-display);
+  letter-spacing: -0.02em;
+  margin: 6px 0 12px;
+}
+
+.ticket__tags {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.ticket__main {
+  display: grid;
+  gap: 18px;
+  grid-area: main;
+  /* minmax(0, …) so a panel's longest unbreakable line cannot widen the column past a phone. */
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+.ticket__title-input {
+  font: var(--t-display);
+  height: auto;
+  letter-spacing: -0.02em;
+  padding: 2px 8px;
+}
+
+/* The sidebar is a short column of small things, so it lives or dies on grouping. Four blocks,
+   each with one job: where the ticket is, what you can do to it, what it is, when it happened. */
+.side {
+  align-self: start;
+  background: var(--ui-surface-2);
+  border-radius: var(--ui-radius-panel);
+  display: grid;
+  gap: 16px;
+  grid-area: side;
+  padding: 16px;
+  position: sticky;
+  top: 0;
+}
+
+.side .btn {
+  width: 100%;
+}
+
+/* Label above control, not beside it: a two-column grid of label and select left every row a
+   different width and the whole block looked like a form somebody gave up on. */
+.side__fields {
+  display: grid;
+  gap: 10px;
+}
+
+.side__field {
+  display: grid;
+  gap: 5px;
+}
+
+.side__field > span {
+  color: var(--ui-muted);
+  font: var(--t-marker);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.side__field select {
+  background: var(--ui-sheet);
+  font: var(--t-medium-s);
+  height: 38px;
+  padding: 0 10px;
+}
+
+/* Priority wears its colour here too, so the tag on the board and the control on the page agree. */
+.select--priority[data-priority='urgent'] {
+  background: var(--pri-urgent-tint);
+  border-color: var(--pri-urgent);
+  color: var(--pri-urgent);
+  font-weight: 600;
+}
+
+.select--priority[data-priority='high'] {
+  background: var(--pri-high-tint);
+  border-color: var(--pri-high);
+  color: var(--pri-high);
+  font-weight: 600;
+}
+
+.select--priority[data-priority='medium'] {
+  background: var(--pri-medium-tint);
+  border-color: var(--pri-medium);
+  color: var(--pri-medium);
+  font-weight: 600;
+}
+
+.select--priority[data-priority='low'] {
+  background: var(--pri-low-tint);
+  border-color: var(--pri-low);
+  color: var(--pri-low);
+  font-weight: 600;
+}
+
+.side__pr {
+  align-items: center;
+  background: var(--ui-sheet);
+  border-radius: var(--ui-radius-s);
+  display: flex;
+  font: var(--t-marker);
+  gap: 8px;
+  overflow-wrap: anywhere;
+  padding: 10px 12px;
+}
+
+.side__pr:hover {
+  text-decoration: underline;
+}
+
+/* Timestamps are the quietest thing here: true, occasionally useful, never the reason you opened
+   the page. They sit at the bottom in one small block. */
+.side__meta {
+  border-top: 1px solid var(--ui-line);
+  display: grid;
+  gap: 4px;
+  padding-top: 12px;
+}
+
+.side__meta > div {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.side__meta dt {
+  color: var(--ui-muted-2);
+  font: var(--t-marker);
+}
+
+.side__meta dd {
+  color: var(--ui-ink-3);
+  font: var(--t-small);
+}
+
+/* ---------- comments, history, locations ---------- */
+.comments {
+  display: grid;
+  margin-bottom: 16px;
+}
+
+.comment {
+  border-top: 1px solid var(--ui-line-3);
+  padding: 14px 0;
+}
+
+.comment:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* The API writes its own comments — a seen-again note, a status change — and they are the app
+   talking, not a person. */
+.comment--system {
+  color: var(--ui-muted);
+  font: var(--t-small-relaxed);
+}
+
+.comment__meta {
+  align-items: baseline;
+  color: var(--ui-muted);
+  display: flex;
+  font: var(--t-marker);
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.comment__meta span {
+  color: var(--ui-ink-2);
+  font-weight: 600;
+}
+
+.comment-form {
+  display: grid;
+  gap: 9px;
+}
+
+.comment-form textarea {
+  min-height: 80px;
+}
+
+.activity-row {
+  align-items: baseline;
+  border-top: 1px solid var(--ui-line-3);
+  display: flex;
+  flex-wrap: wrap;
+  font: var(--t-small);
+  gap: 8px;
+  padding: 9px 0;
+}
+
+.activity-row:first-child {
+  border-top: 0;
+}
+
+.locations-list {
+  display: grid;
+  gap: 10px;
+}
+
+.location-row {
+  background: var(--ui-surface);
+  border-radius: var(--ui-radius-s);
+  font-family: var(--ui-mono);
+  font-size: 13px;
+  padding: 10px 13px;
+}
+
+.location-row pre {
+  color: var(--ui-ink-3);
+  margin: 7px 0 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1100px) {
+  .ticket {
+    grid-template-areas:
+      'head'
+      'side'
+      'main';
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .side {
+    position: static;
+  }
+}
+
+/* ---------- ownership sections ---------- */
+.ticket__summary {
+  color: var(--ui-ink-2);
+  font: var(--t-small-relaxed);
+  margin: 6px 0 0;
+}
+
+.foundation__fields {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.foundation__fields dt {
+  color: var(--ui-muted);
+  font: var(--t-small);
+  font-weight: 600;
+}
+
+.foundation__fields dd {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+}
+
+.foundation__sub {
+  color: var(--ui-muted);
+  font: var(--t-small);
+  font-weight: 600;
+  margin: 16px 0 6px;
+}
+
+.criteria,
+.evidence {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.criteria__tripwire {
+  display: block;
+}
+
+.criteria__verdict {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* Decisions: newest first, replaced ones kept but quieter. */
+.decisions {
+  display: grid;
+  gap: 14px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.decision {
+  display: grid;
+  gap: 6px;
+}
+
+.decision--superseded {
+  opacity: 0.55;
+}
+
+.decision .code {
+  overflow-wrap: anywhere;
+}
+
+.decision__head {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+.decision__rationale,
+.decision__trigger {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.decision__kind--accepted {
+  background: var(--col-done-tint);
+  color: var(--col-done);
+}
+
+.decision__kind--rejected {
+  background: var(--pri-urgent-tint);
+  color: var(--pri-urgent);
+}
+
+.decision__kind--deferred,
+.decision__kind--reframed {
+  background: var(--col-todo-tint);
+  color: var(--col-todo);
+}
+
+.foundation__form {
+  display: grid;
+  gap: 12px;
+}
+
+.foundation__form label {
+  display: grid;
+  gap: 4px;
+}
+
+.foundation__form label > span,
+.criteria-editor legend {
+  color: var(--ui-muted);
+  font: var(--t-small-relaxed);
+}
+
+.criteria-editor {
+  border: 0;
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.criteria-editor__row {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: minmax(0, 9rem) minmax(0, 1fr) auto;
+}
+
+.foundation__actions,
+.proposal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.proposals {
+  border-top: 1px solid var(--ui-line-3);
+  margin-top: 16px;
+}
+
+.proposal {
+  align-items: flex-start;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.proposal__head {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+}
+
+.proposal__text {
+  font: var(--t-small-relaxed);
+  margin: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.resolved__evidence {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 0;
+}
+
+.resolved__evidence dt {
+  font-weight: 600;
+}
+
+.resolved__evidence dd {
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .criteria-editor__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .criteria-editor__row input {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

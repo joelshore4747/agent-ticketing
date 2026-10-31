@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ticketing-db
+    environment:
+      POSTGRES_USER: ticketing
+      POSTGRES_PASSWORD: ticketing
+      POSTGRES_DB: ticketing
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - ticketing-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ticketing"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  # The same dump, on a schedule, and the same restore test after each one, so that neither the backup
+  # nor the proof that it comes back whole is something anyone has to remember (TP-221, TP-222).
+  # It is the database's own image because pg_dump has to be at least as new as the server it dumps,
+  # and this one is exactly it. `just db` starts it and `just stop` stops it; it has no healthcheck,
+  # so it can never hold up `just db --wait`. Its dumps are written as root into a directory the
+  # human owns, which is what lets the host's `just backup` still write and prune there.
+  backup:
+    image: postgres:16-alpine
+    container_name: ticketing-backup
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: ticketing
+      PGPASSWORD: ticketing
+      PGDATABASE: ticketing
+      BACKUP_DIR: /backups
+      # Overrides, passed through empty when unset: the schedule's default lives in
+      # scripts/backup-loop.sh and the retention rule's in scripts/backup.sh, so that neither number
+      # is restated here to go stale against the script that actually applies it.
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-}
+      BACKUP_KEEP: ${BACKUP_KEEP:-}
+    volumes:
+      - ./scripts:/scripts:ro
+      - ${BACKUP_DIR:-${HOME}/.local/share/ticketing/backups}:/backups
+    # Not a Postgres server: setting entrypoint here also clears the image's `postgres` command.
+    entrypoint: ["bash", "/scripts/backup-loop.sh"]
+volumes:
+  ticketing-db:

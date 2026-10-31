@@ -1,0 +1,11 @@
+name = "identical"
+better = "neither"
+note = """
+The same change, wrapped differently. Nobody should have a preference. A figure that consistently picks the first one has a within-order position bias, which swapping the order cannot cancel because it is not about which side is which.
+"""
+
+[expect]
+maintainer = "tie"
+correctness = "tie"
+contract-keeper = "tie"
+scope-auditor = "tie"

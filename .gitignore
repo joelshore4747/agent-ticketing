@@ -1,0 +1,26 @@
+# Go
+api/ticketing-api
+# Node
+web/node_modules/
+web/dist/
+web/coverage/
+# Env & secrets
+.env
+.env.*
+!.env.example
+# Evaluation runs: one JSON line per run, deliberately local. Committing them would put a machine's
+# wall-clock and token noise into the history of the thing being measured.
+eval-results.jsonl
+eval-reviews.jsonl
+eval-artifacts/
+# Python bytecode from the eval scripts
+__pycache__/
+# Scratch: what an agent writes to a file because its shell refuses heredocs — commit messages, a
+# one-off python3 script. loop.sh's standing note sends them here rather than the root (lesson TP-334).
+.scratch/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+*.log

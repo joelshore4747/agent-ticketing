@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["choice", "confidence", "reason"],
+  "properties": {
+    "choice": {
+      "enum": ["first", "second", "tie"],
+      "description": "Which change, by position in the pack. The positions are randomised per call."
+    },
+    "confidence": { "enum": ["low", "medium", "high"] },
+    "reason": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 1000,
+      "description": "One sentence for a voter. A judge writing four paragraphs is reasoning about the experiment rather than the code, and that is where speculation about provenance appears."
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 4,
+      "items": { "type": "string", "maxLength": 120 }
+    }
+  }
+}

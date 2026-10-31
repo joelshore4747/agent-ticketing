@@ -1,0 +1,375 @@
+/* The board page: its view wrapper, the filter bar, the columns and the cards inside them. */
+
+/* The board owns its own scrolling: the columns scroll, the page does not. */
+.view--board {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 20px;
+}
+
+/* Everything above the board holds its height; only the board takes up the slack. Without this a
+   conflict notice or the new-ticket form squeezes the columns instead of pushing them down. */
+.view--board > .notice,
+.view--board > .form-panel,
+.view--board > .filters-row {
+  flex: none;
+}
+
+.view--board > .notice {
+  margin-bottom: 12px;
+}
+
+/* ---------- filters ---------- */
+.filters-row {
+  align-items: center;
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 16px;
+}
+
+.filters-row select {
+  background: var(--ui-sheet);
+  /* Against the full-width rule every other select in the app wants. */
+  width: auto;
+  border: 1px solid var(--ui-line-strong);
+  border-radius: var(--ui-radius-pill);
+  color: var(--ui-ink);
+  cursor: pointer;
+  font: var(--t-medium-s);
+  height: 38px;
+  padding: 0 14px;
+}
+
+.filters-row select:hover {
+  border-color: var(--ui-accent);
+}
+
+/* A segmented switch: one control, the chosen option filled. */
+.switch {
+  background: var(--ui-surface-2);
+  border-radius: var(--ui-radius-pill);
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+}
+
+.switch button {
+  background: none;
+  border: 0;
+  border-radius: var(--ui-radius-pill);
+  color: var(--ui-ink-3);
+  cursor: pointer;
+  font: var(--t-medium-s);
+  padding: 6px 15px;
+  transition: background var(--ui-ease);
+}
+
+.switch button:hover {
+  color: var(--ui-ink);
+}
+
+.switch button.active {
+  background: var(--ui-accent);
+  color: var(--ui-on-brand);
+  font: var(--t-button);
+}
+
+.filters-row .clear {
+  background: none;
+  border: 0;
+  color: var(--ui-muted);
+  cursor: pointer;
+  font: var(--t-medium-s);
+  padding: 6px 4px;
+  text-decoration: underline;
+}
+
+.filters-row .clear:hover {
+  color: var(--ui-ink);
+}
+
+/* ---------- the board ---------- */
+.board {
+  display: grid;
+  flex: 1;
+  gap: 14px;
+  grid-auto-columns: minmax(268px, 1fr);
+  grid-auto-flow: column;
+  min-height: 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.column {
+  background: var(--ui-surface-2);
+  border-radius: var(--ui-radius-panel);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* The hue a column lends its head, its count and its cards' drop state. */
+  --hue: var(--ui-accent);
+  --hue-tint: var(--ui-hover);
+}
+
+.column--inbox {
+  --hue: var(--col-inbox);
+  --hue-tint: var(--col-inbox-tint);
+}
+
+.column--open {
+  --hue: var(--col-todo);
+  --hue-tint: var(--col-todo-tint);
+}
+
+.column--in_progress {
+  --hue: var(--col-progress);
+  --hue-tint: var(--col-progress-tint);
+}
+
+.column--done {
+  --hue: var(--col-done);
+  --hue-tint: var(--col-done-tint);
+}
+
+/* WHAT IS IN PROGRESS SHOULD BE VISIBLE FROM THE DOORWAY. Every other column is the same quiet
+   grey; this one is tinted its own hue, so the eye lands on the work in flight before it reads a
+   single word. It is the only column that gets the treatment — if two did, neither would. */
+.column--in_progress {
+  background: var(--hue-tint);
+}
+
+/* The head is the column's label AND its colour. A dot alone was too little to tell four columns
+   apart down the length of a screen; a whole tinted column would have been four loud blocks. */
+.column__head {
+  align-items: center;
+  background: var(--hue-tint);
+  border-radius: var(--ui-radius-panel) var(--ui-radius-panel) 0 0;
+  display: flex;
+  flex: none;
+  gap: 9px;
+  padding: 13px 16px;
+}
+
+.column__name {
+  color: var(--hue);
+}
+
+.column__dot {
+  background: var(--hue);
+  border-radius: 999px;
+  flex: none;
+  height: 8px;
+  width: 8px;
+}
+
+.column__name {
+  font: var(--t-button);
+}
+
+.review + .review {
+  border-top: 1px solid var(--ui-line, var(--ui-surface-2));
+  margin-top: 14px;
+  padding-top: 4px;
+}
+
+.column__bulk {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 4px 8px;
+}
+
+.column__bulk-all {
+  align-items: center;
+  color: var(--ui-muted);
+  display: flex;
+  font: var(--t-small);
+  gap: 6px;
+  margin-right: auto;
+}
+
+.card__select {
+  margin-right: auto;
+}
+
+.column__more {
+  color: var(--ui-muted);
+  font: var(--t-small);
+  margin: 8px 4px 0;
+}
+
+.column__count {
+  background: var(--hue);
+  border-radius: var(--ui-radius-pill);
+  color: var(--ui-on-dark);
+  font: var(--t-marker);
+  margin-left: auto;
+  padding: 3px 9px;
+}
+
+.column__hint {
+  color: var(--ui-muted-2);
+  font: var(--t-small);
+  padding: 10px 16px 0;
+}
+
+.column__list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* Drop targets. Only the columns this ticket may legally move to light up — the API's transition
+   rules (docs/api.md #4) are mirrored in lib/board.ts, so an illegal drop is never offered rather
+   than offered and then refused with a 409. */
+.board[data-dragging='true'] .column[data-droppable='false'] {
+  opacity: 0.45;
+}
+
+.column[data-over='true'] .column__list {
+  background: var(--hue-tint);
+  border-radius: var(--ui-radius-s);
+  box-shadow: inset 0 0 0 2px var(--hue);
+}
+
+.column__empty {
+  border: 1px dashed var(--ui-line-strong);
+  border-radius: var(--ui-radius-s);
+  color: var(--ui-muted-2);
+  font: var(--t-small-relaxed);
+  padding: 18px 14px;
+  text-align: center;
+}
+
+/* ---------- a ticket, as a card ---------- */
+.card {
+  background: var(--ui-sheet);
+  border-radius: var(--ui-radius-s);
+  box-shadow: var(--ui-shadow-menu);
+  cursor: grab;
+  display: block;
+  padding: 12px 13px;
+  position: relative;
+  transition:
+    box-shadow var(--ui-ease),
+    transform var(--ui-ease);
+}
+
+.card:hover {
+  box-shadow: var(--ui-shadow-lift);
+  transform: translateY(-1px);
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.card[data-dragging='true'] {
+  opacity: 0.4;
+}
+
+/* Urgency rides the left edge as well as its tag, because a red edge is findable in a scan down a
+   column in a way a word never is. Only urgent earns one: an edge on every card says nothing. */
+.card--urgent::before {
+  background: var(--pri-urgent);
+  border-radius: 3px 0 0 3px;
+  bottom: 0;
+  content: '';
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 3px;
+}
+
+.card__top {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.card__title {
+  color: var(--ui-ink);
+  font: var(--t-medium-s);
+  line-height: 1.4;
+}
+
+.card__foot {
+  align-items: center;
+  color: var(--ui-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: 9px;
+}
+
+.card__time {
+  font: var(--t-marker);
+  white-space: nowrap;
+}
+
+/* A resolution can be a paragraph. On the card it is a reminder of what happened, not the record
+   of it — three lines, and the ticket page has the rest. */
+.card__resolution {
+  border-left: 2px solid var(--col-done);
+  color: var(--ui-ink-3);
+  display: -webkit-box;
+  font: var(--t-small-relaxed);
+  margin-top: 8px;
+  overflow: hidden;
+  padding-left: 9px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.card__actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+/* ---------- responsive ----------
+   `.view`'s own mobile padding override lives here, not in base.css: the board's element carries
+   both `.view` and `.view--board`, and `.view--board`'s unconditional padding-bottom (above) would
+   otherwise beat it — this rule has to stay later than that one in the cascade, as it was when both
+   lived in the same file. */
+@media (max-width: 760px) {
+  .view {
+    padding: 16px 16px 32px;
+  }
+
+  .view--board {
+    overflow: visible;
+  }
+
+  .board {
+    grid-auto-columns: minmax(258px, 82vw);
+    max-height: none;
+  }
+
+  .column__list {
+    max-height: 64vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover {
+    transform: none;
+  }
+}

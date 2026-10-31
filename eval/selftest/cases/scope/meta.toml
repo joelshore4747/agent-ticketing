@@ -1,0 +1,11 @@
+name = "scope"
+better = "control"
+note = """
+The same fix twice, one of them dragging 40 lines of reformatting through a file the ticket never mentions. `scope-auditor` must see it; nobody else is asked to.
+"""
+
+[expect]
+maintainer = "any"
+correctness = "any"
+contract-keeper = "any"
+scope-auditor = "better"

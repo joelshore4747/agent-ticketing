@@ -1,0 +1,17 @@
+@import './tokens.css';
+@import './base.css';
+@import './rail.css';
+@import './board.css';
+@import './ticket.css';
+@import './batch.css';
+@import './dialogs.css';
+
+/* The tracker's shell: a dark rail that is where the chrome stops and the page begins, a header
+   that names the view, and one scrolling body, with the board as the main view.
+
+   Split by area (TP-120): tokens above, then base (resets and the shared chip/button/field/panel
+   design system), rail (the nav rail and topbar), board, ticket, batch (batch, roadmaps, checkpoint,
+   needs-you) and dialogs, in that order so the cascade reads the same as when this was one file. A
+   rule that appears in two of these — only `kbd` does — keeps the same relative order it had before:
+   rail's is the header search hint, dialogs' is the shortcuts-dialog key and it must stay last to
+   win, as it did here. */

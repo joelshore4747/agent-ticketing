@@ -1,0 +1,14 @@
+{
+  "key": "TP-S1",
+  "title": "ListBatches returns two batches in a different order on every call",
+  "description": "The batch list is ordered by started_at alone. Two batches opened in the same transaction share that value to the microsecond, and the list comes back in a different order each time it is fetched, so the web app's Batches page reshuffles on refresh.",
+  "type": "bug",
+  "priority": "high",
+  "area": "api",
+  "locations": [
+    {
+      "file_path": "api/internal/service/batches.go",
+      "line_start": 58
+    }
+  ]
+}

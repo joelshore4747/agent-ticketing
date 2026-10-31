@@ -1,0 +1,11 @@
+name = "obvious"
+better = "control"
+note = """
+A real fix with a test that fails without it, against a Go-side dedupe whose map iteration is itself unordered, no test, and an unrelated file reformatted. Every figure that owns an axis here must see it, in both orders. A figure that splits on this has a prompt problem, and no subtler case can tell you anything until it is fixed.
+"""
+
+[expect]
+maintainer = "better"
+correctness = "better"
+contract-keeper = "any"
+scope-auditor = "better"

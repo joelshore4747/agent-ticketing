@@ -1,0 +1,440 @@
+/* The batch page (digest, reviews, plan), the roadmaps list and the checkpoint control, plus Needs
+   you — the queue of batch checkpoints and decisions waiting on the human. */
+
+/* ---------- batches ---------- */
+.batch {
+  display: grid;
+  gap: 18px;
+}
+
+.batch__head h1 {
+  font: var(--t-display);
+  letter-spacing: -0.02em;
+  margin: 6px 0 12px;
+}
+
+.batch__tags {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.batch__note {
+  margin-bottom: 12px;
+}
+
+/* The timestamp goes to the far end of a batch's foot, so a column of them reads down the page. */
+.box__when {
+  margin-left: auto;
+}
+
+/* One guidance document, collapsed. The first question a reader has is which documents went out,
+   not what they say, and five bodies open at once is a wall of markdown. */
+.doc {
+  background: var(--ui-surface);
+  border-radius: var(--ui-radius-s);
+  box-shadow: inset 0 0 0 1px var(--ui-line-3);
+  padding: 12px 14px;
+}
+
+.doc + .doc {
+  margin-top: 10px;
+}
+
+.doc__head {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  font: var(--t-strong);
+  gap: 9px;
+  list-style: none;
+}
+
+.doc__head::-webkit-details-marker {
+  display: none;
+}
+
+.doc__head::after {
+  color: var(--ui-muted-2);
+  content: '\25BE';
+  margin-left: auto;
+}
+
+.doc[open] .doc__head::after {
+  content: '\25B4';
+}
+
+.doc__paths {
+  color: var(--ui-muted-2);
+  font: var(--t-marker);
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+
+.doc__stale {
+  background: var(--ui-error-bg);
+  border-radius: var(--ui-radius-s);
+  color: var(--ui-error-ink);
+  font: var(--t-small-relaxed);
+  margin-top: 10px;
+  padding: 9px 12px;
+}
+
+.doc .markdown-body {
+  border-top: 1px solid var(--ui-line-3);
+  margin-top: 10px;
+  padding-top: 12px;
+}
+
+/* The corpus page hangs the two dates that say whether anyone still stands behind a document off
+   the bottom of it, where they are readable without opening it. */
+.doc-entry + .doc-entry {
+  margin-top: 10px;
+}
+
+.doc-entry__meta {
+  display: flex;
+  gap: 6px;
+  margin: 5px 0 0;
+  padding-left: 14px;
+}
+
+/* On the corpus page the banner leads the view rather than sitting inside one document. */
+.view .doc__stale:first-child {
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+
+/* ---------- plans, roadmaps and tags ---------- */
+.plan,
+.roadmap__batches {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.plan__row,
+.roadmap__row {
+  align-items: start;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 28px minmax(0, 1fr);
+}
+
+.plan__position {
+  background: var(--ui-surface-2);
+  border-radius: 50%;
+  color: var(--ui-ink-2);
+  display: grid;
+  font: var(--t-small);
+  font-weight: 600;
+  height: 28px;
+  place-items: center;
+  width: 28px;
+}
+
+.plan__row[data-status='done'] .plan__position,
+.plan__row[data-status='closed'] .plan__position,
+.roadmap__row[data-state='finished'] .plan__position {
+  background: var(--col-done-tint);
+  color: var(--col-done);
+}
+
+.plan__card {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.plan__state {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 20px;
+}
+
+.plan__accept {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.plan__locked {
+  margin-bottom: 14px;
+}
+
+.checkpoint {
+  display: grid;
+  gap: 10px;
+}
+
+.checkpoint__label {
+  color: var(--ui-muted);
+  font: var(--t-small-relaxed);
+}
+
+.checkpoint__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkpoint__done {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkpoint__note {
+  flex-basis: 100%;
+  font: var(--t-small-relaxed);
+}
+
+.roadmap + .roadmap {
+  margin-top: 18px;
+}
+
+.roadmap__spec {
+  margin-bottom: 14px;
+}
+
+.roadmap__spec summary {
+  color: var(--ui-muted);
+  cursor: pointer;
+  font: var(--t-small);
+}
+
+.roadmap__body {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.roadmap__line {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.roadmap__title {
+  align-items: center;
+  color: var(--ui-ink);
+  display: inline-flex;
+  font-weight: 600;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.roadmap__title:hover {
+  text-decoration: underline;
+}
+
+.roadmap__what {
+  color: var(--ui-ink-3);
+  font: var(--t-small-relaxed);
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .plan__row,
+  .roadmap__row {
+    gap: 8px;
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .plan__position {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+.checkpoint__hints {
+  color: var(--ui-muted);
+  display: grid;
+  font: var(--t-small-relaxed);
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- needs you ---------- */
+.needs-page {
+  display: grid;
+  gap: 18px;
+}
+
+/* Needs you: one row per decision waiting on the human, each a link to where it is made. */
+.needs {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.needs__row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.needs__link {
+  align-items: baseline;
+  color: inherit;
+  display: flex;
+  flex: 1 1 260px;
+  gap: 10px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.needs__link .key {
+  flex: none;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
+.needs__link:hover span:last-child {
+  text-decoration: underline;
+}
+
+.needs__row > .meta {
+  flex-basis: 100%;
+}
+
+/* The What you do steps of a needs-joel finding (TP-247): full width, under the row's link and
+   meta, so Joel reads them without opening the ticket. */
+.needs__steps {
+  flex-basis: 100%;
+  font-size: 0.94em;
+}
+
+.needs__steps > :last-child {
+  margin-bottom: 0;
+}
+
+/* A folded group (the findings): its head is the summary, so the count shows while folded. */
+.needs__fold > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.needs__fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.needs__fold[open] > summary {
+  margin-bottom: 12px;
+}
+
+/* Folded, the head's divider has nothing under it: drop it and say how to open the group instead. */
+.needs__fold:not([open]) .panel__head {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.needs__fold-hint {
+  color: var(--ui-muted);
+  font: var(--t-small);
+}
+
+.needs__fold-hint::before {
+  content: '▸ ';
+}
+
+.needs__fold[open] .needs__fold-hint {
+  display: none;
+}
+
+/* The to-do list: what only Joel can do, first on the page, one box each with a tick. */
+.todo {
+  border: 2px solid var(--ui-attention);
+}
+
+.todo__lead {
+  color: var(--ui-muted);
+  margin: 0 0 14px;
+}
+
+.todo__list {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.todo__box {
+  background: var(--ui-sheet);
+  border: 1px solid var(--ui-line-strong);
+  border-left: 6px solid var(--ui-attention);
+  border-radius: var(--ui-radius-s);
+  display: grid;
+  gap: 6px 16px;
+  grid-template-areas:
+    'kind action'
+    'title action'
+    'body action';
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 14px 16px;
+}
+
+.todo__kind {
+  color: var(--ui-attention);
+  font: var(--t-label);
+  grid-area: kind;
+  text-transform: uppercase;
+}
+
+.todo__title {
+  font: var(--t-strong);
+  grid-area: title;
+  overflow-wrap: anywhere;
+}
+
+.todo__body {
+  grid-area: body;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.todo__body > p {
+  margin: 0 0 6px;
+}
+
+.todo__action {
+  align-content: start;
+  display: grid;
+  gap: 6px;
+  grid-area: action;
+  justify-items: end;
+}
+
+.todo__tick {
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .todo__box {
+    grid-template-areas: 'kind' 'title' 'body' 'action';
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .todo__action {
+    justify-items: start;
+  }
+}

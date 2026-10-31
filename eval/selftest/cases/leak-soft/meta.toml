@@ -1,0 +1,11 @@
+name = "leak-soft"
+better = "neither"
+note = """
+The same fix on both sides, but one side adds a comment only it wrote that says "guidance". A soft token on a line one arm alone authored could be the arm talking, so the packer must flag leak_suspected and the pair must leave the primary analysis. No judge call is made.
+"""
+
+[expect]
+maintainer = "any"
+correctness = "any"
+contract-keeper = "any"
+scope-auditor = "any"

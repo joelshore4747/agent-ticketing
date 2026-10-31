@@ -1,0 +1,95 @@
+diff --git a/api/internal/service/batches.go b/api/internal/service/batches.go
+--- a/api/internal/service/batches.go
++++ b/api/internal/service/batches.go
+@@ -56,7 +56,10 @@ func ListBatches(ctx context.Context, db DB, projectID uuid.UUID) ([]model.Batch, error) {
+ func ListBatches(ctx context.Context, db DB, projectID uuid.UUID) ([]model.Batch, error) {
+ 	rows, err := db.Query(ctx,
+-		`SELECT `+batchColumns+` FROM batches WHERE project_id = $1 ORDER BY started_at DESC`, projectID)
++		`SELECT `+batchColumns+` FROM batches WHERE project_id = $1 `+
++			`ORDER BY started_at DESC, id DESC`, projectID)
+ 	return collect[model.Batch](rows, err)
+ }
+diff --git a/web/src/lib/time.ts b/web/src/lib/time.ts
+--- a/web/src/lib/time.ts
++++ b/web/src/lib/time.ts
+@@ -1,40 +1,44 @@
+-const LINE_1 = 1;
++const LINE_1 = 1; // reformatted
+-const LINE_2 = 2;
++const LINE_2 = 2; // reformatted
+-const LINE_3 = 3;
++const LINE_3 = 3; // reformatted
+-const LINE_4 = 4;
++const LINE_4 = 4; // reformatted
+-const LINE_5 = 5;
++const LINE_5 = 5; // reformatted
+-const LINE_6 = 6;
++const LINE_6 = 6; // reformatted
+-const LINE_7 = 7;
++const LINE_7 = 7; // reformatted
+-const LINE_8 = 8;
++const LINE_8 = 8; // reformatted
+-const LINE_9 = 9;
++const LINE_9 = 9; // reformatted
+-const LINE_10 = 10;
++const LINE_10 = 10; // reformatted
+-const LINE_11 = 11;
++const LINE_11 = 11; // reformatted
+-const LINE_12 = 12;
++const LINE_12 = 12; // reformatted
+-const LINE_13 = 13;
++const LINE_13 = 13; // reformatted
+-const LINE_14 = 14;
++const LINE_14 = 14; // reformatted
+-const LINE_15 = 15;
++const LINE_15 = 15; // reformatted
+-const LINE_16 = 16;
++const LINE_16 = 16; // reformatted
+-const LINE_17 = 17;
++const LINE_17 = 17; // reformatted
+-const LINE_18 = 18;
++const LINE_18 = 18; // reformatted
+-const LINE_19 = 19;
++const LINE_19 = 19; // reformatted
+-const LINE_20 = 20;
++const LINE_20 = 20; // reformatted
+-const LINE_21 = 21;
++const LINE_21 = 21; // reformatted
+-const LINE_22 = 22;
++const LINE_22 = 22; // reformatted
+-const LINE_23 = 23;
++const LINE_23 = 23; // reformatted
+-const LINE_24 = 24;
++const LINE_24 = 24; // reformatted
+-const LINE_25 = 25;
++const LINE_25 = 25; // reformatted
+-const LINE_26 = 26;
++const LINE_26 = 26; // reformatted
+-const LINE_27 = 27;
++const LINE_27 = 27; // reformatted
+-const LINE_28 = 28;
++const LINE_28 = 28; // reformatted
+-const LINE_29 = 29;
++const LINE_29 = 29; // reformatted
+-const LINE_30 = 30;
++const LINE_30 = 30; // reformatted
+-const LINE_31 = 31;
++const LINE_31 = 31; // reformatted
+-const LINE_32 = 32;
++const LINE_32 = 32; // reformatted
+-const LINE_33 = 33;
++const LINE_33 = 33; // reformatted
+-const LINE_34 = 34;
++const LINE_34 = 34; // reformatted
+-const LINE_35 = 35;
++const LINE_35 = 35; // reformatted
+-const LINE_36 = 36;
++const LINE_36 = 36; // reformatted
+-const LINE_37 = 37;
++const LINE_37 = 37; // reformatted
+-const LINE_38 = 38;
++const LINE_38 = 38; // reformatted
+-const LINE_39 = 39;
++const LINE_39 = 39; // reformatted
+-const LINE_40 = 40;
++const LINE_40 = 40; // reformatted

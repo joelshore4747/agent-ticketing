@@ -1,0 +1,27 @@
+name = "subtle"
+better = "guided"
+note = """
+Two one-line ORDER BY changes of identical shape and size. One breaks the tie on `actor`, which is
+free text and repeats, so the ordering is still not total and the reshuffling the ticket describes
+survives the fix. The other breaks it on the primary key. Only `correctness` owns that, and the
+others are expected to tie — a figure that confidently picks a side here is deciding someone else's
+question, which is how four voters quietly become one.
+
+An earlier version of this case turned on NULLS LAST. It was withdrawn rather than tuned around:
+`started_at` is NOT NULL in the schema, so the clause was dead code, and the judges — who are shown
+the diff and the ticket but never the schema — could not have known either way. A fixture whose
+answer is not derivable from what the judge is given tests the judge's luck, not its reasoning.
+
+`maintainer` is marked `overlap`, not `tie`, because it measurably does not tie here: shown two
+one-line changes where one does not fix the bug, Sonnet picks the working one in both orders even
+when told in as many words that whether the change works is another reviewer's question. Two rounds
+of prompt tightening did not move it, and a third would be fitting the prompt to this fixture rather
+than to the job. So it is recorded: maintainer and correctness are not independent on a pair whose
+only difference is correctness, and their votes must not be pooled.
+"""
+
+[expect]
+maintainer = "overlap"
+correctness = "better"
+contract-keeper = "tie"
+scope-auditor = "tie"

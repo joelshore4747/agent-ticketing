@@ -1,0 +1,44 @@
+diff --git a/api/internal/service/batches.go b/api/internal/service/batches.go
+--- a/api/internal/service/batches.go
++++ b/api/internal/service/batches.go
+@@ -56,7 +56,10 @@ func ListBatches(ctx context.Context, db DB, projectID uuid.UUID) ([]model.Batch, error) {
+ func ListBatches(ctx context.Context, db DB, projectID uuid.UUID) ([]model.Batch, error) {
+ 	rows, err := db.Query(ctx,
+ 		`SELECT `+batchColumns+` FROM batches WHERE project_id = $1 ORDER BY started_at DESC`, projectID)
+-	return collect[model.Batch](rows, err)
++	out, err := collect[model.Batch](rows, err)
++	if err != nil {
++		return nil, err
++	}
++	// Stable ordering.
++	seen := map[uuid.UUID]model.Batch{}
++	for _, b := range out {
++		seen[b.ID] = b
++	}
++	fixed := make([]model.Batch, 0, len(seen))
++	for _, b := range seen {
++		fixed = append(fixed, b)
++	}
++	return fixed, nil
+ }
+diff --git a/web/src/lib/labels.ts b/web/src/lib/labels.ts
+--- a/web/src/lib/labels.ts
++++ b/web/src/lib/labels.ts
+@@ -1,12 +1,14 @@
+-import type { Priority, Status, TicketType } from '../api/types';
++import type {Priority, Status, TicketType} from '../api/types';
+ 
+-const TITLE_CASE: Record<string, string> = {
+-  in_progress: 'In progress',
+-};
++const TITLE_CASE: Record<string, string> = {in_progress: 'In progress'};
+ 
+ /** "in_progress" -> "In progress", "bug" -> "Bug". */
+-export function label(value: TicketType | Priority | Status | string): string {
+-  if (value in TITLE_CASE) return TITLE_CASE[value];
+-  return value.charAt(0).toUpperCase() + value.slice(1);
+-}
++export function label(value: TicketType|Priority|Status|string): string {
++  if (value in TITLE_CASE) { return TITLE_CASE[value]; }
++  return value.charAt(0).toUpperCase()+value.slice(1);
++}

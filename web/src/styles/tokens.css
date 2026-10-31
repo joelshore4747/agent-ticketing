@@ -1,0 +1,131 @@
+/* Design tokens. One warm stone neutral makes every light surface (paper, surface, sheet) as three
+   steps of a single tone rather than three unrelated greys, and the rail is the one dark thing on
+   screen, a deep slate-blue. With the chrome that quiet, the only colour left is colour that means
+   something: a column, a priority, an area, a signal. Nothing here is decorative. Green means done. */
+:root {
+  /* ---- Type scale ---- */
+  --t-display: 700 34px/1 var(--ui-display);
+  --t-title: 700 28px/1 var(--ui-display);
+  --t-heading: 700 24px/1.25 var(--ui-display);
+  --t-card: 600 19px/1.3 var(--ui-display);
+  --t-strong: 600 17px var(--ui-display);
+  --t-medium: 500 17px var(--ui-display);
+  --t-button: 600 15px var(--ui-display);
+  --t-medium-s: 500 15px var(--ui-display);
+  --t-body: 400 15.5px/1.6 var(--ui-display);
+  --t-body-plain: 400 15.5px var(--ui-display);
+  --t-small: 400 14px var(--ui-display);
+  --t-small-relaxed: 400 14px/1.5 var(--ui-display);
+
+  --t-label: 600 12.5px var(--ui-mono);
+  --t-marker: 500 11.5px var(--ui-mono);
+  --t-meta: 500 13.5px var(--ui-mono);
+  --t-num-s: 600 16px var(--ui-mono);
+  --t-num: 600 25px/1 var(--ui-mono);
+  --t-num-l: 600 38px/1 var(--ui-mono);
+
+  --ui-display: 'Instrument Sans Variable', 'Instrument Sans', system-ui, sans-serif;
+  --ui-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---- Ink and surfaces ---- */
+  --ui-ink: #1c1a17;
+  --ui-ink-2: #3d3933;
+  --ui-ink-3: #57524a;
+  --ui-muted: #6b665d;
+  --ui-muted-2: #7a746a;
+  --ui-muted-3: #908a80;
+  --ui-muted-4: #b3ada3;
+
+  --ui-paper: #f3f1ec;
+  --ui-surface: #f9f8f5;
+  --ui-sheet: #ffffff;
+  --ui-surface-2: #ebe8e1;
+  --ui-hover: #e3dfd6;
+
+  --ui-line: #e0dcd3;
+  --ui-line-2: #e6e2da;
+  --ui-line-3: #ece9e2;
+  --ui-line-strong: #c7c1b6;
+
+  --ui-accent: #23324a;
+  --ui-on-dark: #ffffff;
+  --ui-on-brand: #ffffff;
+
+  /* ---- The rail ---- */
+  --ui-rail-bg: #172033;
+  --ui-rail-hover: #222d44;
+  --ui-rail-ink: #b9c2d3;
+  --ui-rail-mark: #e3e8f1;
+  --ui-rail-title: #f2f4f8;
+  --ui-nav-on-bg: #e8ecf4;
+  --ui-nav-on-ink: #172033;
+
+  /* ---- Signals ---- */
+  --ui-live: #276b43;
+  --ui-live-tint: #dcefe2;
+  --ui-attention: #b23a2a;
+  --ui-attention-tint: #f8e1dc;
+  --ui-error-bg: #f8e1dc;
+  --ui-error-line: #e2ab9f;
+  --ui-error-ink: #962f21;
+
+  /* ---- The four columns ----
+     A ticket's journey has four stops, and each is coloured outright rather than aliasing a
+     category hue, because the colour IS the meaning: violet for the unsorted pile, blue for queued
+     work, burnt orange for the one thing burning now, green for finished. Four hues far enough
+     apart that a column is identifiable from its edge alone, at a glance, across the room. */
+  --col-inbox: #6c4fa3;
+  --col-inbox-tint: #ebe6f5;
+  --col-todo: #2a5ea8;
+  --col-todo-tint: #dfe8f6;
+  --col-progress: #a8430e;
+  --col-progress-tint: #f9e4d6;
+  --col-done: #276b43;
+  --col-done-tint: #dcefe2;
+
+  /* ---- Priority ----
+     A heat ramp, not four arbitrary colours: red, ochre, blue, stone. Every level is tagged rather
+     than only the loud two, because "low" is information as well — it is what tells you a card can
+     wait. Each sits on its own tint, so four tags in a column still read as one palette. */
+  --pri-urgent: #b23a2a;
+  --pri-urgent-tint: #f8e1dc;
+  --pri-high: #875408;
+  --pri-high-tint: #f6e9cf;
+  --pri-medium: #3a6688;
+  --pri-medium-tint: #e2ebf3;
+  --pri-low: #6b665d;
+  --pri-low-tint: #ebe8e1;
+
+  /* ---- Area hues ----
+     Six muted colours built to sit side by side as a set. Areas are a list the user manages, so a
+     hue is picked by hashing the name rather than named per area (lib/areaHue.ts). Muted on
+     purpose — an area is a label on a card, not the card's subject, and these must not compete
+     with the four column hues above. */
+  --area-1: #3a6688;
+  --area-2: #875408;
+  --area-3: #3f7350;
+  --area-4: #6f4a86;
+  --area-5: #8a4459;
+  --area-6: #4f5694;
+
+  /* Neutral until a card or panel names its own (see .area-* and .col-* in global.css). */
+  --hue: var(--ui-accent);
+  --hue-tint: var(--ui-hover);
+
+  /* ---- Shape and depth ---- */
+  --ui-radius: 12px; /* cards */
+  --ui-radius-panel: 12px; /* panels, menus, wells */
+  --ui-radius-s: 8px; /* buttons, inputs */
+  --ui-radius-tile: 10px; /* icon tiles */
+  --ui-radius-nav: 8px; /* the rail's selected row */
+  --ui-radius-pill: 999px;
+  --ui-shadow-lift: 0 1px 3px rgb(28 26 23 / 8%), 0 10px 24px rgb(28 26 23 / 10%);
+  --ui-shadow-menu: 0 1px 2px rgb(28 26 23 / 5%), 0 4px 12px rgb(28 26 23 / 8%);
+
+  /* Every field and control stands this tall and sits this far in from its own frame. */
+  --ui-field-h: 44px;
+  --ui-field-pad: 14px;
+  --ui-ease: 140ms ease;
+
+  --rail-w: 248px;
+}

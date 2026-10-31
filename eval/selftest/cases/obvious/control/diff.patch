@@ -1,0 +1,46 @@
+diff --git a/api/internal/service/batches.go b/api/internal/service/batches.go
+--- a/api/internal/service/batches.go
++++ b/api/internal/service/batches.go
+@@ -56,7 +56,10 @@ func ListBatches(ctx context.Context, db DB, projectID uuid.UUID) ([]model.Batch, error) {
+ func ListBatches(ctx context.Context, db DB, projectID uuid.UUID) ([]model.Batch, error) {
+ 	rows, err := db.Query(ctx,
+-		`SELECT `+batchColumns+` FROM batches WHERE project_id = $1 ORDER BY started_at DESC`, projectID)
++		// started_at is not a total order: two batches opened in one transaction share it to the
++		// microsecond, and Postgres may then return them either way round.
++		`SELECT `+batchColumns+` FROM batches WHERE project_id = $1 `+
++			`ORDER BY started_at DESC, id DESC`, projectID)
+ 	return collect[model.Batch](rows, err)
+ }
+diff --git a/api/internal/service/batches_test.go b/api/internal/service/batches_test.go
+new file mode 100644
+--- /dev/null
++++ b/api/internal/service/batches_test.go
+@@ -0,0 +1,24 @@
++package service_test
++
++// Two batches sharing a started_at to the microsecond, which is what opening them in one
++// transaction does. Without a tiebreaker the two listings disagree and this fails.
++func TestListBatchesIsATotalOrder(t *testing.T) {
++	ctx, pool, project := setup(t)
++
++	if _, err := pool.Exec(ctx, `INSERT INTO batches (project_id, kind, actor, started_at)
++		SELECT $1, 'plan', 'tester', now() FROM generate_series(1, 8)`, project.ID); err != nil {
++		t.Fatal(err)
++	}
++
++	first, err := service.ListBatches(ctx, pool, project.ID)
++	if err != nil {
++		t.Fatal(err)
++	}
++	for i := 0; i < 5; i++ {
++		again, err := service.ListBatches(ctx, pool, project.ID)
++		if err != nil {
++			t.Fatal(err)
++		}
++		for j := range first {
++			if first[j].ID != again[j].ID {
++				t.Fatalf("listing %d differs at %d: %s then %s", i, j, first[j].ID, again[j].ID)
++			}
++		}
++	}
++}

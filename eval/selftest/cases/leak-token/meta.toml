@@ -1,0 +1,11 @@
+name = "leak-token"
+better = "neither"
+note = """
+One side names a guidance document by slug. The packer must ABORT the build rather than filter it out, because a pack that needs filtering came from a capture that is already broken.
+"""
+
+[expect]
+maintainer = "any"
+correctness = "any"
+contract-keeper = "any"
+scope-auditor = "any"

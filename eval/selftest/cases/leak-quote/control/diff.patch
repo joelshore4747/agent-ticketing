@@ -1,0 +1,11 @@
+diff --git a/api/internal/service/batches.go b/api/internal/service/batches.go
+--- a/api/internal/service/batches.go
++++ b/api/internal/service/batches.go
+@@ -56,7 +56,10 @@ func ListBatches(ctx context.Context, db DB, projectID uuid.UUID) ([]model.Batch, error) {
+ func ListBatches(ctx context.Context, db DB, projectID uuid.UUID) ([]model.Batch, error) {
+ 	rows, err := db.Query(ctx,
+-		`SELECT `+batchColumns+` FROM batches WHERE project_id = $1 ORDER BY started_at DESC`, projectID)
++		`SELECT `+batchColumns+` FROM batches WHERE project_id = $1 `+
++			`ORDER BY started_at DESC, id DESC`, projectID)
+ 	return collect[model.Batch](rows, err)
+ }

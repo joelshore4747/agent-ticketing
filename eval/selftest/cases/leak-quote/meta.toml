@@ -1,0 +1,11 @@
+name = "leak-quote"
+better = "neither"
+note = """
+One side quotes a sentence of the corpus verbatim in a comment, with no slug and no arm word anywhere. The packer must flag leak_suspected and the pair must be excluded from the primary analysis. No judge call is made.
+"""
+
+[expect]
+maintainer = "any"
+correctness = "any"
+contract-keeper = "any"
+scope-auditor = "any"

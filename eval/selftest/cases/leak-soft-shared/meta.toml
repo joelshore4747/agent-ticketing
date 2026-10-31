@@ -1,0 +1,11 @@
+name = "leak-soft-shared"
+better = "neither"
+note = """
+Both sides add the same test-mock line, word for word, and that line says "Guidance" because the app's shared nav queries a Guidance count. The line is identical in both arms, so it cannot tell a judge which is which: the packer must build the pair WITHOUT flagging it. This is the real TP-5 boilerplate that excluded every pair before TP-52. No judge call is made.
+"""
+
+[expect]
+maintainer = "any"
+correctness = "any"
+contract-keeper = "any"
+scope-auditor = "any"

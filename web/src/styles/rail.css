@@ -1,0 +1,375 @@
+/* The dark rail (project switcher, nav) and the topbar above the page body — the app's persistent
+   chrome, on every route. */
+
+/* ---------- rail ---------- */
+.rail {
+  background: var(--ui-rail-bg);
+  color: var(--ui-rail-ink);
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: 18px 12px;
+  width: var(--rail-w);
+}
+
+/* ---- the project switcher ----
+   Which project you are in, at the top of the rail where the wordmark used to be: in an app that
+   has more than one, the wordmark was saying the least useful thing on screen. */
+.rail__project {
+  padding: 0 4px 14px;
+  position: relative;
+}
+
+.rail__switch {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--ui-radius-s);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  gap: 11px;
+  padding: 8px 10px;
+  text-align: left;
+  transition: background var(--ui-ease);
+  width: 100%;
+}
+
+.rail__switch:hover,
+.rail__switch[aria-expanded='true'] {
+  background: var(--ui-rail-hover);
+}
+
+.rail__mark {
+  background: var(--ui-rail-mark);
+  border-radius: var(--ui-radius-tile);
+  display: grid;
+  flex: none;
+  height: 28px;
+  place-items: center;
+  width: 28px;
+}
+
+.rail__mark svg {
+  color: var(--ui-rail-bg);
+}
+
+.rail__switch-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.rail__switch-text b {
+  color: var(--ui-rail-title);
+  font: var(--t-medium-s);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rail__switch-text span {
+  color: var(--ui-muted-3);
+  font: var(--t-marker);
+  letter-spacing: 0.1em;
+}
+
+.rail__chevron {
+  color: var(--ui-muted-3);
+  font-size: 11px;
+  margin-left: auto;
+}
+
+.rail__menu {
+  background: var(--ui-sheet);
+  border-radius: var(--ui-radius-s);
+  box-shadow: var(--ui-shadow-lift);
+  left: 4px;
+  padding: 6px;
+  position: absolute;
+  right: 4px;
+  top: 100%;
+  z-index: 5;
+}
+
+.rail__menu-item {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: 7px;
+  color: var(--ui-ink);
+  cursor: pointer;
+  display: flex;
+  font: var(--t-medium-s);
+  gap: 8px;
+  padding: 9px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.rail__menu-item:hover {
+  background: var(--ui-hover);
+}
+
+.rail__menu-item.on {
+  background: var(--ui-accent);
+  color: var(--ui-on-brand);
+}
+
+.rail__menu-item .code {
+  color: var(--ui-muted);
+  margin-left: auto;
+}
+
+.rail__menu-item.on .code {
+  color: var(--ui-muted-4);
+}
+
+.rail__menu-new {
+  border-top: 1px solid var(--ui-line-3);
+  border-radius: 0 0 7px 7px;
+  color: var(--ui-ink-3);
+  margin-top: 4px;
+  padding-top: 11px;
+}
+
+.rail__nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 4px;
+}
+
+.rail__group {
+  color: var(--ui-rail-ink);
+  font: var(--t-marker);
+  letter-spacing: 0.14em;
+  opacity: 0.7;
+  padding: 16px 10px 7px;
+  text-transform: uppercase;
+}
+
+.rail__link {
+  align-items: center;
+  border-radius: var(--ui-radius-nav);
+  color: var(--ui-rail-ink);
+  display: flex;
+  font: var(--t-medium-s);
+  gap: 12px;
+  margin: 0 10px;
+  padding: 10px 13px;
+  transition:
+    background var(--ui-ease),
+    color var(--ui-ease);
+}
+
+.rail__link:hover {
+  background: var(--ui-rail-hover);
+  color: var(--ui-rail-title);
+}
+
+/* Where you are, in the tone the rail itself is not: a light band against a straight edge, square
+   so the selection lines up with the rail's own edge rather than floating in it. */
+.rail__link.active {
+  background: var(--ui-nav-on-bg);
+  color: var(--ui-nav-on-ink);
+  font: var(--t-button);
+}
+
+/* Every destination wears its colour on the icon, so the code travels onto the page instead of
+   staying in the rail. The glyph only — a tinted word would read as a different kind of link. */
+.rail__link svg {
+  color: var(--hue-rail, currentColor);
+  flex: none;
+}
+
+.rail__link.active svg {
+  color: inherit;
+}
+
+.rail__link--ai {
+  --hue-rail: #a9c1f5;
+}
+
+.rail__link--human {
+  --hue-rail: #f0b071;
+}
+
+.rail__link--quiet {
+  color: var(--ui-muted-3);
+}
+
+/* Resets the chrome a <button> brings that a <Link> never had, so "Log out" sits in the nav like
+   every other row. */
+.rail__link--button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+/* An area has no glyph of its own, so it wears its colour as a dot in the same 19px slot the
+   icons occupy — the rows line up whether or not they have an icon. */
+.rail__dot {
+  background: var(--hue-area);
+  border-radius: 999px;
+  flex: none;
+  height: 9px;
+  margin: 0 5px;
+  width: 9px;
+}
+
+.rail__count {
+  background: rgb(255 255 255 / 10%);
+  border-radius: var(--ui-radius-pill);
+  font: var(--t-marker);
+  margin-left: auto;
+  padding: 2px 8px;
+}
+
+.rail__link.active .rail__count {
+  background: rgb(23 25 28 / 10%);
+}
+
+/* A number that means "waiting on you" is the one number in the rail that gets a colour — on the
+   active row too, where the rule above would otherwise grey it to near-invisible white-on-light. */
+.rail__count--attention,
+.rail__link.active .rail__count--attention {
+  background: var(--col-inbox);
+  color: var(--ui-on-dark);
+}
+
+/* ---------- topbar ---------- */
+.topbar {
+  align-items: center;
+  background: var(--ui-paper);
+  border-bottom: 1px solid var(--ui-line);
+  display: flex;
+  flex: none;
+  gap: 1.5rem;
+  min-height: 78px;
+  padding: 14px 28px;
+}
+
+.topbar__title {
+  min-width: 0;
+}
+
+.topbar__title h1 {
+  font: var(--t-title);
+  letter-spacing: -0.01em;
+}
+
+.topbar__title p {
+  color: var(--ui-muted);
+  font: var(--t-small);
+  margin-top: 4px;
+}
+
+.topbar__actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* `.search` itself lives in base.css, not here: `.search input` and the generic field rule down
+   there both match the input at equal specificity, and which one wins — and so whether Chromium
+   still draws its own native search-field chrome underneath — depends on which is later. Keeping
+   the whole component together in base.css, ahead of that rule, reproduces the order this had as
+   one file. This file keeps only the parts of the topbar that don't have that dependency. */
+
+kbd {
+  background: var(--ui-surface-2);
+  border-radius: 5px;
+  font: var(--t-marker);
+  padding: 2px 6px;
+}
+
+/* ---------- responsive ----------
+   Under 1100px the rail becomes a strip of icons; under 760px it lies down as a top bar. */
+@media (max-width: 1100px) {
+  :root {
+    --rail-w: 64px;
+  }
+
+  .rail {
+    padding: 14px 8px;
+  }
+
+  .rail__link {
+    justify-content: center;
+    margin: 0;
+    padding: 11px 0;
+  }
+
+  .rail__group,
+  .rail__link span:not(.rail__count):not(.rail__dot),
+  .rail__switch-text,
+  .rail__chevron {
+    display: none;
+  }
+
+  .rail__project {
+    padding: 0 0 14px;
+  }
+
+  .rail__switch {
+    justify-content: center;
+    padding: 6px 0;
+  }
+
+  .rail__menu {
+    left: 0;
+    min-width: 190px;
+    right: auto;
+  }
+
+  .rail__dot {
+    margin: 0;
+  }
+
+  .rail__count {
+    margin: 0;
+    padding: 1px 5px;
+  }
+}
+
+@media (max-width: 760px) {
+  .rail {
+    flex-direction: row;
+    padding: 8px;
+    width: auto;
+  }
+
+  .rail__brand {
+    padding: 0 10px 0 6px;
+  }
+
+  .rail__nav {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .topbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .topbar__actions {
+    margin-left: 0;
+  }
+
+  .search {
+    width: 100%;
+  }
+}
